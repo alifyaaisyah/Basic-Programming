@@ -1,0 +1,449 @@
+#include<iostream>
+#include"header1.h"
+
+using namespace std;
+
+// CREATE :
+void createListJ(list_juri &J)
+{
+    first(J) = NULL;
+}
+void createListP(list_peserta &P)
+{
+    first(P) = NULL;
+}
+void createListR(list_relasi &R)
+{
+    first(R) = NULL;
+}
+
+void createElm_juri(string unm, string pass, address_juri &p)
+{
+    p = new elm_juri;
+    info(p).uname = unm;
+    info(p).pass = pass;
+    next(p) = NULL;
+}
+void createElm_peserta(string x, float y, address_peserta &p)
+{
+    p = new elm_peserta;
+    info(p).nama = x;
+    info(p).nilai = y; //di NULL aja?
+    next(p) = NULL;
+}
+void createElm_relasi(float x, address_juri p, address_peserta q, address_relasi &r)
+{
+    r = new elm_relasi;
+    info(r) = x;
+    p1(r) = p;
+    p2(r) = q;
+    next(r) = NULL;
+}
+
+// INSERT :
+void insert_Peserta(list_peserta &P, address_peserta q)
+{
+    if (first(P) == NULL)
+    {
+        first(P) = q;
+    }
+    else
+    {
+        address_peserta r = first(P);
+        while (next(r) != NULL)
+        {
+            r = next(r);
+        }
+        next(r) = q;
+    }
+}   //insert last
+
+void insert_first_Juri(list_juri &J, address_juri p)
+{
+    if (first(J) == NULL)
+    {
+        first(J) = p;
+    }
+    else
+    {
+        next(p) = first(J);
+        first(J) = p;
+    }
+}
+void insert_last_Juri(list_juri &J, address_juri p)
+{
+    address_juri q = first(J);
+    while (next(q) != NULL)
+    {
+        q = next(q);
+    }
+    next(q) = p;
+}
+void insert_after_Juri(address_juri prec, address_juri p)
+{
+    next(p) = next(prec);
+    next(prec) = p;
+}
+void add_Juri(list_juri &J, address_juri p)
+{
+    if (first(J) == NULL)
+    {
+        insert_first_Juri(J, p);
+    }
+    else if (info(first(J)).uname > info(p).uname)
+    {
+        insert_first_Juri(J, p);
+    }
+    else
+    {
+        address_juri q = first(J);
+        while (info(next(q)).uname < info(p).uname && next(next(q)) != NULL)
+        {
+            q = next(q);
+        }
+        if (next(next(q)) == NULL && info(next(q)).uname < info(p).uname )
+        {
+            insert_last_Juri(J, p);
+        }
+        else
+        {
+            insert_after_Juri(q, p);
+        }
+    }
+} // urut ascending
+void insert_Relasi(list_relasi &R, address_relasi p)          //insert first
+{
+    if (first(R) == NULL)
+    {
+        first(R) = p;
+    }
+    else
+    {
+        next(p) = first(R);
+        first(R) = p;
+    }
+}
+
+// PRINT :
+void print_Juri(list_juri J)
+{
+    if (first(J) != NULL)
+    {
+        address_juri p = first(J);
+        while (p != NULL)
+        {
+            cout<<info(p).uname<<" "<<info(p).pass<<" . ";
+            p = next(p);
+        }
+    }
+    cout<<endl;
+}
+void print_Peserta(list_peserta P)
+{
+    if (first(P) != NULL)
+    {
+        address_peserta p = first(P);
+        while (p != NULL)
+        {
+            cout<<info(p).nama<<" "<<info(p).nilai<<" . ";
+            p = next(p);
+        }
+    }
+    cout<<endl;
+}
+
+void print_Relasi(list_relasi R)
+{
+    if (first(R) != NULL)
+    {
+        address_relasi p = first(R);
+        while (p != NULL)
+        {
+            cout<<"Nilai "<<info(p2(p)).nama<<" dinilai oleh "<<info(p1(p)).uname<<" : "<<info(p)<<" "<<endl;
+            p = next(p);
+        }
+    }
+    cout<<endl;
+}
+
+// SEARCH :
+address_juri searchJuri(list_juri J, string cari){
+    if (first(J) != NULL){
+        address_juri p = first(J);
+        bool found = false;
+        while (p != NULL && !found){
+            if (info(p).uname == cari){
+                found = true;
+            } else {
+                p = next(p);
+            }
+        }
+        if (found){
+            return p;
+        } else {
+            return NULL;
+        }
+    } else {
+        return NULL;
+    }
+}
+address_peserta searchPeserta(list_peserta P, string cari){
+        if (first(P) != NULL){
+        address_peserta p = first(P);
+        bool found = false;
+        while (p != NULL && !found){
+            if (info(p).nama == cari){
+                found = true;
+            } else {
+                p = next(p);
+            }
+        }
+        if (found){
+            return p;
+        } else {
+            return NULL;
+        }
+    } else {
+        return NULL;
+    }
+}
+address_relasi searchRelasi(list_relasi R, string juri, string peserta){
+    if (first(R) != NULL){
+        address_relasi p = first(R);
+        bool found = false;
+        while (p != NULL && !found){
+            if (info(p1(p)).uname == juri && info(p2(p)).nama == peserta){
+                found = true;
+            } else {
+                p = next(p);
+            }
+        }
+        if (found){
+            return p;
+        } else {
+            return NULL;
+        }
+    } else {
+        return NULL;
+    }
+}
+address_relasi search_juri_diRelasi(list_relasi R, string juri){
+    if (first(R) != NULL){
+        address_relasi p = first(R);
+        bool found = false;
+        while (p != NULL && !found){
+            if (info(p1(p)).uname == juri){
+                found = true;
+            } else {
+                p = next(p);
+            }
+        }
+        if (found){
+            return p;
+        } else {
+            return NULL;
+        }
+    } else {
+        return NULL;
+    }
+}
+address_relasi search_peserta_diRelasi(list_relasi R, string peserta){
+    if (first(R) != NULL){
+        address_relasi p = first(R);
+        bool found = false;
+        while (p != NULL && !found){
+            if (info(p2(p)).nama == peserta){
+                found = true;
+            } else {
+                p = next(p);
+            }
+        }
+        if (found){
+            return p;
+        } else {
+            return NULL;
+        }
+    } else {
+        return NULL;
+    }
+}
+
+
+// DELETE :
+void delete_elm_Juri(list_juri &J, address_juri &p, string unameJuri){
+    p = searchJuri(J, unameJuri);
+    if (p != NULL){
+        if (p == first(J)){
+            first(J) = next(first(J));
+        } else {
+            address_juri q = first(J);
+            while (info(next(q)).uname != unameJuri){
+            q = next(q);
+            }
+            if (next(p) != NULL){
+                next(q) = next(p);
+            } else {
+                next(q) = NULL;
+            }
+        }
+        next(p) = NULL;
+    }
+}
+
+void delete_elm_peserta(list_peserta &P, address_peserta &p, string nama){
+    p = searchPeserta(P, nama);
+    if (p != NULL){
+        if (p == first(P)){
+            first(P) = next(first(P));
+        } else {
+            address_peserta q = first(P);
+            while (info(next(q)).nama != nama){
+            q = next(q);
+            }
+            if (next(p) != NULL){
+                next(q) = next(p);
+            } else {
+                next(q) = NULL;
+            }
+        }
+        next(p) = NULL;
+    }
+}
+void delete_elm_Relasi(list_relasi &R, address_relasi &p, string uname_juri, string nama_peserta){
+    p = searchRelasi(R, uname_juri, nama_peserta);
+    if (p != NULL){
+        if (p = first(R)){
+            first(R) = next(first(R));
+            next(p) = NULL;
+        } else {
+            address_relasi q = first(R);
+            while (info(next(p1(q))).uname != uname_juri && info(next(p2(q))).nama != nama_peserta){
+            q = next(q);
+            }
+            p = next(q);
+            if (next(p) != NULL){
+                next(q) = next(p);
+            } else {
+                next(q) = NULL;
+            }
+            next(p) = NULL;
+        }
+    }
+}
+
+void delete_Relasi_dari_juri(list_relasi &R, address_relasi &p, string juri){
+    p = search_juri_diRelasi(R, juri);
+    if (p != NULL){
+        if ( p = first(R)){
+            first(R) = next(first(R));
+            next(p) = NULL;
+        } else {
+            address_relasi q = first(R);
+            while (info(next(p1(q))).uname != juri){
+            q = next(q);
+            }
+            p = next(q);
+            if (next(p) != NULL){
+                next(q) = next(p);
+            } else {
+                next(q) = NULL;
+            }
+            next(p) = NULL;
+        }
+    }
+}
+void delete_Relasi_dari_peserta(list_relasi &R, address_relasi &p, string peserta){
+    p = search_peserta_diRelasi(R, peserta);
+    if (p != NULL){
+        if (p = first(R)){
+            first(R) = next(first(R));
+            next(p) = NULL;
+        } else {
+            address_relasi q = first(R);
+            while (info(next(p2(q))).nama != peserta){
+            q = next(q);
+            }
+            p = next(q);
+            if (next(p) != NULL){
+                next(q) = next(p);
+            } else {
+                next(q) = NULL;
+            }
+            next(p) = NULL;
+        }
+    }
+}
+
+/*
+void MainMenu(){
+    int pil;
+    cout << "Menu:" << endl;
+    cout << "[1] Menu lainnya" << endl;
+    cout << "[2] Login admin" << endl;
+    cout << "[3] Login Juri" << endl;
+    cout << "Masukkan pilihan Anda: ";
+    cin >> pil;
+    while (pil!=1 && pil!=2 && pil!=3){
+        cout << "Input tidak valid. Tolong masukkan pilihan anda kembali.\n";
+        cout << "Masukkan pilihan Anda: ";
+        cin >> pil;
+    }
+    if (pil==1){
+        NonLogin();
+    } else if (pil==2){
+        LoginAdmin();
+    } else if (pil==3){
+        LoginJuri();
+    }
+}
+
+void NonLogin(){
+    cout<<"ini gapake login"<<endl;
+}
+
+void LoginAdmin(){
+    string uName, pass;
+    int tries = 1;
+    cout << "\nUsername: ";
+    cin >> uName;
+    cout << "Password: ";
+    cin >> pass;
+    while ((uName!="adminTC" || pass!="sukseskankontes") && (tries<3)){
+        cout << "Username atau password tidak valid." << endl;
+        cout << "\nUsername: ";
+        cin >> uName;
+        cout << "Password: ";
+        cin >> pass;
+        ++tries;
+    }
+    if (tries==3) {
+        cout << "Login admin gagal.\nMengembalikan ke menu awal...\n\n";
+        MainMenu();
+    } else {
+        cout << "Login berhasil.\n\n";
+        MenuAdmin();
+    }
+}
+
+void MenuAdmin(){
+    int pil;
+    cout << "---------------------------------"<<endl;
+    cout << "  Menu admin:\n";
+    cout << "  [1] Insert data" << endl;
+    cout << "  [2] Lihat data juri" << endl;
+    cout << "  [3] Edit data juri" << endl;
+    cout << "  [4] Hapus data juri" << endl;
+    cout << "  [5] Tambah peserta baru" << endl;
+    cout << "  [6] Lihat data peserta" << endl;
+    cout << "  [7] Edit data peserta" << endl;
+    cout << "  [8] Hapus data peserta" << endl;
+    cout << "  [9] Lihat nilai setiap peserta" << endl;
+    cout << " [10] Lihat detail penilaian tiap juri\n" << endl;
+    cout << "Masukkan pilihan Anda:";
+    cin >> pil;
+    //belom selesai
+}
+void LoginJuri(){
+    cout<<"ini login juri"<<endl;
+}
+*/

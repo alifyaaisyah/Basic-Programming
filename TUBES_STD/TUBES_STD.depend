@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1588381076 source:c:\ica\semester2\tubes_std\main.cpp
+	<iostream>
+	"header1.h"
+
+1588382682 c:\ica\semester2\tubes_std\header1.h
+	<iostream>
+	<string.h>
+
+1588382682 source:c:\ica\semester2\tubes_std\tubes1.cpp
+	<iostream>
+	"header1.h"
+
